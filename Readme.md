@@ -1,3 +1,6 @@
+# Garnet HCL language
+
+
 This proposes to build a simple programming language based on the HCL way of doing things. 
 
 The idea is to basically, write ruby like syntax when doing terraform stuff. 
