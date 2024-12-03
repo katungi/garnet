@@ -51,7 +51,7 @@ resource "aws_instance" "web_server" do
   
   # Using Ruby-like block for user data
   user_data do |data|
-    data.add_commands(
+    dat:a.add_commands(
       "yum update -y",
       "yum install -y httpd",
       "systemctl start httpd",
@@ -117,8 +117,6 @@ The example covers some fundamental patterns, but here are critical Terraform fe
 1. State Management & Data Sources:
 
 ```ruby
-ruby
-Copy
 # Data source syntax
 data "aws_availability_zones" "available" do
   state "available"
@@ -139,8 +137,6 @@ end
 1. Variables and Type Constraints:
 
 ```ruby
-ruby
-Copy
 variable "environment" do
   type "string"
   default "development"
@@ -154,9 +150,7 @@ end
 
 1. Provider Configuration with Aliases:
 
-```ruby
-ruby
-Copy
+```Ruby
 provider "aws" do
   alias "east"
   region "us-east-1"
@@ -172,8 +166,6 @@ end
 1. Dynamic Blocks and Count/For_each:
 
 ```ruby
-ruby
-Copy
 resource "aws_security_group" "example" do
 # Count example
   count 3
@@ -202,8 +194,6 @@ end
 1. Dependencies and Lifecycle Rules:
 
 ```ruby
-ruby
-Copy
 resource "aws_instance" "example" do
   depends_on [aws_vpc.main, aws_subnet.primary]
 
@@ -219,8 +209,6 @@ end
 1. Workspaces and Backend Configuration:
 
 ```ruby
-ruby
-Copy
 terraform do
   backend "s3" do
     bucket "my-terraform-state"
@@ -235,8 +223,6 @@ end
 1. Provisioners:
 
 ```ruby
-ruby
-Copy
 resource "aws_instance" "web" do
 # ... other configuration ...
 
