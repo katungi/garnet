@@ -1,0 +1,88 @@
+# Define a provider configuration block.
+
+provider "aws" do 
+  region "us-west-2"
+  profile "default"
+end
+
+# Define a VPC resource 
+resource "aws_vpc" "main" do 
+  cidr_block "10.0.0.0/16"
+
+  tags do 
+    Name "Main VPC"
+    Environment "Production"
+  end
+end
+
+# Define an EC2 Instance
+resource "aws_instance" "web_server" do
+  ami "ami-055b15949950"
+  instance_type "t2.micro"
+  subnet_id vpc.main.subnet_ids[0]
+
+  # Using Ruby-Like conditional syntax
+  ebs_optimized true if instance_type.starts_with?("t2")
+
+  # Using Ruby-Like block for user data
+  user_data do |data| 
+    data.add_commands(
+      "yum update -y",
+      "yum insall -y httpd",
+      "systemctl start httpd",
+      "systemctl enable httpd"
+    )
+  end
+
+# Dynamic block for security groups
+security_groups do |sg| 
+  sg.ingress do 
+    from_port 80
+    to_port 80
+    protocol "tcp"
+    cidr_blocks["0.0.0.0/0"]
+  end
+
+  sg.egress do 
+    from_port 0
+    to_port 0
+    protocol "-1"
+    cidr_blocks ["0.0.0.0/0"]
+  end
+end
+
+["data1", "data2"].each do |volume_name|
+  ebs_block_device do 
+    device_name "/dev/sd#{volume_name}"
+    volume_size 100
+    volume_type "gp3"
+    delete_on_termination true
+  end
+end
+end
+
+# Define an output block with Ruby-Like string interpolation
+
+output "instance_ip" do
+  value "#{aws_instance.web_server.public_ip}"
+  description "Public IP of the web server"
+end 
+
+# Define a module with Ruby-Like Method definition
+output "instance_ip" do
+  value "#{aws_instance.web_server.public_ip}"
+  description "Public IP of the web server"
+end
+# Define a module with Ruby-like method definition
+module "network" do
+  source "./modules/network"
+  
+  def calculate_subnet_cidr(vpc_cidr, index)
+    # Ruby-like method for CIDR calculation
+    base_cidr = vpc_cidr.split("/")[0]
+    "#{base_cidr}/#{20 + index}"
+  end
+  
+  vpc_cidr aws_vpc.main.cidr_block
+  subnet_count 3
+end
